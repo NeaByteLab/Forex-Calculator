@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forex Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-dark: #020617;
+        --glass-bg: rgba(30, 41, 59, 0.4);
+        --glass-border: rgba(255, 255, 255, 0.05);
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+        --accent-glow: rgba(59, 130, 246, 0.5);
+        --success: #10b981;
+        --danger: #ef4444;
+        --card-radius: 16px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Outfit', sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-dark);
+        background-image: radial-gradient(
+            circle at 10% 20%,
+            rgba(59, 130, 246, 0.15) 0%,
+            transparent 40%
+          ),
+          radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%);
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+      }
+
+      /* --- Header --- */
+      header {
+        margin-bottom: 3rem;
+        text-align: center;
+        position: relative;
+      }
+      h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        letter-spacing: -0.05em;
+        background: linear-gradient(to right, #fff, #94a3b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+      }
+      .subtitle {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        font-weight: 300;
+      }
+
+      /* --- Tabs --- */
+      .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      }
+
+      .tabs-container {
+        display: inline-flex;
+        padding: 0.5rem;
+        border-radius: 99px;
+        margin-bottom: 2.5rem;
+        gap: 0.5rem;
+        position: relative;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        padding: 0.75rem 1.5rem;
+        border-radius: 99px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .tab-btn:hover {
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .tab-btn.active {
+        background: var(--accent-gradient);
+        color: white;
+        box-shadow: 0 4px 12px var(--accent-glow);
+      }
+
+      /* --- Content Layout --- */
+      .main-container {
+        width: 100%;
+        max-width: 1100px;
+        position: relative;
+      }
+
+      .content-section {
+        display: none;
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .content-section.active {
+        display: block;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .grid-layout {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+      @media (max-width: 900px) {
+        .grid-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* --- Input Card --- */
+      .input-card {
+        border-radius: var(--card-radius);
+        padding: 2rem;
+      }
+
+      h2 {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: #fff;
+      }
+      h2::before {
+        content: '';
+        display: block;
+        width: 4px;
+        height: 24px;
+        background: var(--accent-gradient);
+        border-radius: 2px;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+        position: relative;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-secondary);
+        font-weight: 600;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 1rem;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--glass-border);
+        border-radius: 0.75rem;
+        color: var(--text-primary);
+        font-size: 1rem;
+        transition: all 0.2s;
+      }
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+      }
+
+      .action-btn {
+        width: 100%;
+        padding: 1rem;
+        margin-top: 1rem;
+        background: var(--accent-gradient);
+        color: white;
+        border: none;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px var(--accent-glow);
+      }
+      .action-btn:active {
+        transform: translateY(0);
+      }
+
+      /* --- Result Card --- */
+      .result-card {
+        border-radius: var(--card-radius);
+        padding: 2rem;
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: var(--text-secondary);
+        opacity: 0.5;
+      }
+      .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .result-content {
+        display: none;
+        width: 100%;
+        height: 100%;
+      }
+      .result-content.show {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+      .stat-item {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--glass-border);
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      .stat-val {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #fff;
+      }
+
+      .val-lg {
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+      }
+      .text-green {
+        color: var(--success);
+      }
+      .text-red {
+        color: var(--danger);
+      }
+      .text-brand {
+        color: #60a5fa;
+      }
+
+      .compact-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      .compact-table td {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--glass-border);
+      }
+      .compact-table tr:last-child td {
+        border: none;
+      }
+      .tag {
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .tag.blue {
+        background: rgba(59, 130, 246, 0.2);
+        color: #60a5fa;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tabs-container glass-panel">
+      <button class="tab-btn active" onclick="switchTab('position')">Position Sizing</button>
+      <button class="tab-btn" onclick="switchTab('profit')">Profit Calculator</button>
+      <button class="tab-btn" onclick="switchTab('pivot')">Pivot Points</button>
+      <button class="tab-btn" onclick="switchTab('simulation')">Simulations</button>
+      <button class="tab-btn" onclick="switchTab('backtest')">Backtester</button>
+    </div>
+    <div class="main-container">
+      <div id="position" class="content-section active">
+        <div class="grid-layout">
+          <div class="input-card glass-panel">
+            <h2>Configuration</h2>
+            <div class="form-group">
+              <label>Instrument</label>
+              <select id="pos-pair">
+                <option value="XAUUSD">Gold (XAUUSD)</option>
+                <option value="EURUSD">EURUSD - Euro</option>
+                <option value="GBPUSD">GBPUSD - Pound</option>
+                <option value="USDJPY">USDJPY - Yen</option>
+                <option value="BTCUSD">Bitcoin (BTC)</option>
+                <option value="US30">US30 Index</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Leverage (1:x)</label>
+              <input type="number" id="pos-leverage" value="100" placeholder="e.g. 100, 500" />
+            </div>
+            <div class="form-group">
+              <label>Account Risk ($)</label>
+              <input type="number" id="pos-risk" value="100" />
+            </div>
+            <div class="form-group">
+              <label>Entry Price</label>
+              <input type="number" id="pos-entry" step="0.01" value="2000.00" />
+            </div>
+            <div class="form-group">
+              <label>Stop Loss</label>
+              <input type="number" id="pos-stop" step="0.01" value="1995.00" />
+            </div>
+            <button class="action-btn" onclick="calcPosition()">Calculate Position</button>
+          </div>
+          <div class="result-card glass-panel">
+            <div id="pos-empty" class="empty-state">
+              <span class="empty-icon">📊</span>
+              <p>Enter parameters to calculate lot size</p>
+            </div>
+            <div id="pos-result" class="result-content"></div>
+          </div>
+        </div>
+      </div>
+      <div id="profit" class="content-section">
+        <div class="grid-layout">
+          <div class="input-card glass-panel">
+            <h2>Trade Details</h2>
+            <div class="form-group">
+              <label>Instrument</label>
+              <select id="prof-pair">
+                <option value="XAUUSD">Gold (XAUUSD)</option>
+                <option value="EURUSD">EURUSD</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Side</label>
+              <select id="prof-side">
+                <option value="BUY">Long / Buy</option>
+                <option value="SELL">Short / Sell</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Lot Size</label>
+              <input type="number" id="prof-lot" value="1.0" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label>Entry / Exit</label>
+              <div style="display: flex; gap: 0.5rem">
+                <input type="number" id="prof-entry" placeholder="In" value="2000" />
+                <input type="number" id="prof-exit" placeholder="Out" value="2010" />
+              </div>
+            </div>
+            <button class="action-btn" onclick="calcProfit()">Calculate PnL</button>
+          </div>
+          <div class="result-card glass-panel">
+            <div id="prof-empty" class="empty-state">
+              <span class="empty-icon">💰</span>
+              <p>Calculate your potential profit</p>
+            </div>
+            <div id="prof-result" class="result-content"></div>
+          </div>
+        </div>
+      </div>
+      <div id="pivot" class="content-section">
+        <div class="grid-layout">
+          <div class="input-card glass-panel">
+            <h2>OHLC Data</h2>
+            <div class="form-group">
+              <label>Method</label
+              ><select id="piv-method">
+                <option value="CLASSIC">Classic</option>
+                <option value="FIBONACCI">Fibonacci</option>
+                <option value="CAMARILLA">Camarilla</option>
+                <option value="WOODIES">Woodies</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>High</label><input type="number" id="piv-high" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label>Low</label><input type="number" id="piv-low" step="0.01" />
+            </div>
+            <div class="form-group">
+              <label>Close</label><input type="number" id="piv-close" step="0.01" />
+            </div>
+            <button class="action-btn" onclick="calcPivot()">Analyze Levels</button>
+          </div>
+          <div class="result-card glass-panel">
+            <div id="piv-empty" class="empty-state">
+              <span class="empty-icon">🎯</span>
+              <p>Generate support & resistance levels</p>
+            </div>
+            <div id="piv-result" class="result-content"></div>
+          </div>
+        </div>
+      </div>
+      <div id="simulation" class="content-section">
+        <div class="grid-layout">
+          <div class="input-card glass-panel">
+            <h2>Parameters</h2>
+            <div class="form-group">
+              <label>Start Capital</label><input type="number" id="sim-bal" value="1000" />
+            </div>
+            <div class="form-group">
+              <label>Win Streak Count</label><input type="number" id="sim-trades" value="10" />
+            </div>
+            <div class="form-group">
+              <label>Gain per Trade (%)</label><input type="number" id="sim-gain" value="5" />
+            </div>
+            <button class="action-btn" onclick="calcSim()">Simulate Curve</button>
+          </div>
+          <div class="result-card glass-panel" style="overflow-y: auto; max-height: 500px">
+            <div id="sim-empty" class="empty-state">
+              <span class="empty-icon">📈</span>
+              <p>Project your equity growth</p>
+            </div>
+            <div id="sim-result" class="result-content"></div>
+          </div>
+        </div>
+      </div>
+      <div id="backtest" class="content-section">
+        <div class="grid-layout">
+          <div class="input-card glass-panel">
+            <h2>Strategy Stats</h2>
+            <div class="form-group">
+              <label>Balance</label><input type="number" id="bt-bal" value="10000" />
+            </div>
+            <div class="form-group">
+              <label>Win Rate (%)</label><input type="number" id="bt-win" value="55" />
+            </div>
+            <div class="form-group">
+              <label>Risk:Reward (1:?)</label><input type="number" id="bt-rr" value="2.0" />
+            </div>
+            <div class="form-group">
+              <label>Trade Frequency</label
+              ><input type="number" id="bt-freq" value="2" placeholder="Trades per day" />
+            </div>
+            <div class="form-group">
+              <label>Duration (Days)</label><input type="number" id="bt-days" value="30" />
+            </div>
+            <button class="action-btn" onclick="calcBacktest()">Run Simulation</button>
+          </div>
+          <div class="result-card glass-panel">
+            <div id="bt-empty" class="empty-state">
+              <span class="empty-icon">🎲</span>
+              <p>Test your strategy edge</p>
+            </div>
+            <div id="bt-result" class="result-content"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      import {
+        calculateLotSize,
+        calculateProfit,
+        calculatePivotPoints,
+        simulateCompounding,
+        calculateBacktest,
+        instrumentConfigs
+      } from './index.mjs'
+      const populatePairs = () => {
+        const pairs = Object.keys(instrumentConfigs).sort()
+        const selects = ['pos-pair', 'prof-pair']
+        selects.forEach(id => {
+          const el = document.getElementById(id)
+          el.innerHTML = ''
+          pairs.forEach(pair => {
+            const type = instrumentConfigs[pair].type
+            const opt = document.createElement('option')
+            opt.value = pair
+            opt.text = `${pair} - ${type}`
+            el.appendChild(opt)
+          })
+          if (pairs.includes('XAUUSD')) el.value = 'XAUUSD'
+        })
+      }
+      populatePairs()
+      const show = (id, html) => {
+        document.getElementById(id.replace('result', 'empty')).style.display = 'none'
+        const el = document.getElementById(id)
+        el.innerHTML = html
+        el.classList.add('show')
+      }
+      window.switchTab = id => {
+        document.querySelectorAll('.active').forEach(e => e.classList.remove('active'))
+        document.getElementById(id).classList.add('active')
+        event.target.classList.add('active')
+      }
+      window.calcPosition = () => {
+        try {
+          const params = {
+            pairName: document.getElementById('pos-pair').value,
+            openPrice: Number(document.getElementById('pos-entry').value),
+            stopPrice: Number(document.getElementById('pos-stop').value),
+            riskUSD: Number(document.getElementById('pos-risk').value),
+            leverage: Number(document.getElementById('pos-leverage').value)
+          }
+          const res = calculateLotSize(params)
+          const html = `
+                    <div style="text-align:center; margin-bottom:2rem">
+                        <span class="stat-label">RECOMMENDED LOT SIZE</span>
+                        <div class="stat-val val-lg text-brand">${res.position.lot}</div>
+                        <div class="tag blue">${res.position.units.toLocaleString()} Units</div>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-item"><span class="stat-label">RISK AMOUNT</span><div class="stat-val text-red">$${
+                          res.risk.amount
+                        }</div></div>
+                        <div class="stat-item"><span class="stat-label">MARGIN REQUIRED</span><div class="stat-val">$${
+                          res.margin.required
+                        }</div></div>
+                         <div class="stat-item"><span class="stat-label">PIP VALUE</span><div class="stat-val">$${res.position.pipValue.toFixed(
+                           2
+                         )}</div></div>
+                        <div class="stat-item"><span class="stat-label">STOP DISTANCE</span><div class="stat-val">${res.risk.stopDistance.toFixed(
+                          1
+                        )} <small>pips</small></div></div>
+                    </div>
+                `
+          show('pos-result', html)
+        } catch (e) {
+          alert(e.message)
+        }
+      }
+      window.calcProfit = () => {
+        try {
+          const res = calculateProfit({
+            pairName: document.getElementById('prof-pair').value,
+            sidePosition: document.getElementById('prof-side').value,
+            lotSize: Number(document.getElementById('prof-lot').value),
+            entryPrice: Number(document.getElementById('prof-entry').value),
+            exitPrice: Number(document.getElementById('prof-exit').value)
+          })
+          const color = res.isProfit ? 'text-green' : 'text-red'
+          show(
+            'prof-result',
+            `
+                     <div style="text-align:center; margin-bottom:2rem">
+                        <span class="stat-label">NET PROFIT / LOSS</span>
+                        <div class="stat-val val-lg ${color}">${
+              res.isProfit ? '+' : '-'
+            }$${Math.abs(res.profitUSD).toFixed(2)}</div>
+                    </div>
+                    <div class="stat-grid">
+                        <div class="stat-item"><span class="stat-label">PIPS ${
+                          res.isProfit ? 'GAINED' : 'LOST'
+                        }</span><div class="stat-val">${res.pips.toFixed(1)}</div></div>
+                        <div class="stat-item"><span class="stat-label">SIDE</span><div class="stat-val">${
+                          res.sidePosition
+                        }</div></div>
+                    </div>
+                `
+          )
+        } catch (e) {
+          alert(e.message)
+        }
+      }
+      window.calcPivot = () => {
+        const res = calculatePivotPoints({
+          high: Number(document.getElementById('piv-high').value),
+          low: Number(document.getElementById('piv-low').value),
+          close: Number(document.getElementById('piv-close').value),
+          method: document.getElementById('piv-method').value
+        })
+        let html = `
+                <div style="text-align:center; margin-bottom:1.5rem">
+                    <span class="stat-label">PIVOT POINT</span>
+                    <div class="stat-val val-lg text-brand">${res.p}</div>
+                </div>
+                <table class="compact-table">
+            `
+        ;[4, 3, 2, 1].forEach(i => {
+          if (res['r' + i])
+            html += `<tr><td class="text-red">R${i}</td><td style="text-align:right">${
+              res['r' + i]
+            }</td></tr>`
+        })
+        ;[1, 2, 3, 4].forEach(i => {
+          if (res['s' + i])
+            html += `<tr><td class="text-green">S${i}</td><td style="text-align:right">${
+              res['s' + i]
+            }</td></tr>`
+        })
+        html += '</table>'
+        show('piv-result', html)
+      }
+      window.calcSim = () => {
+        const start = Number(document.getElementById('sim-bal').value)
+        const pct = Number(document.getElementById('sim-gain').value)
+        const trades = Number(document.getElementById('sim-trades').value)
+        const res = simulateCompounding({
+          startBalance: start,
+          profitPerTrade: start * (pct / 100),
+          totalTrades: trades
+        })
+        let html = `<table class="compact-table"><thead><tr><th>#</th><th style="text-align:right">Balance</th><th style="text-align:right">Profit</th></tr></thead><tbody>`
+        res.forEach(r => {
+          html += `<tr><td>${
+            r.period
+          }</td><td style="text-align:right; color:#fff">$${r.endBalance.toFixed(
+            0
+          )}</td><td style="text-align:right" class="text-green">+$${r.profit.toFixed(0)}</td></tr>`
+        })
+        html += '</tbody></table>'
+        show('sim-result', html)
+      }
+      window.calcBacktest = () => {
+        const risk =
+          Number(document.getElementById('bt-bal').value) *
+          (Number(document.getElementById('bt-bal').value) * 0.01)
+        const res = calculateBacktest({
+          initBalance: Number(document.getElementById('bt-bal').value),
+          riskAmount: Number(document.getElementById('bt-bal').value) * 0.01,
+          winRate: Number(document.getElementById('bt-win').value),
+          rewardRatio: Number(document.getElementById('bt-rr').value),
+          tradePerDay: Number(document.getElementById('bt-freq').value),
+          totalDays: Number(document.getElementById('bt-days').value)
+        })
+        const s = res.summary
+        show(
+          'bt-result',
+          `
+                <div style="text-align:center; margin-bottom:1.5rem">
+                    <span class="stat-label">ENDING EQUITY</span>
+                    <div class="stat-val val-lg ${
+                      s.isProfitable ? 'text-green' : 'text-red'
+                    }">$${s.finalBalance.toFixed(2)}</div>
+                    <div class="stat-label" style="margin-top:0.5rem">Net Profit: $${s.netProfit.toFixed(
+                      2
+                    )}</div>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat-item"><span class="stat-label">WIN RATE</span><div class="stat-val">${
+                      s.actualWinRate
+                    }%</div></div>
+                    <div class="stat-item"><span class="stat-label">MAX DRAWDOWN</span><div class="stat-val text-red">$${(
+                      s.maxDrawdown || 0
+                    ).toFixed(0)}</div></div>
+                    <div class="stat-item"><span class="stat-label">TOTAL TRADES</span><div class="stat-val">${
+                      s.totalTrades
+                    }</div></div>
+                    <div class="stat-item"><span class="stat-label">BEST STREAK</span><div class="stat-val text-green">${
+                      s.bestWinStreak
+                    }</div></div>
+                </div>
+            `
+        )
+      }
+    </script>
+  </body>
+</html>
