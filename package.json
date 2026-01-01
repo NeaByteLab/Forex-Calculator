@@ -1,0 +1,60 @@
+{
+  "name": "@neabyte/forex-calculator",
+  "version": "0.1.0",
+  "description": "Simple and reliable Forex Calculator tools for trading analysis.",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "unbuild --minify",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "rm -rf dist && npm run build"
+  },
+  "keywords": [
+    "forex",
+    "calculator",
+    "trading",
+    "analysis",
+    "pip",
+    "lot-size",
+    "pivot-points",
+    "backtest",
+    "simulation"
+  ],
+  "devDependencies": {
+    "unbuild": "^3.6.1"
+  },
+  "author": {
+    "name": "NeaByteLab",
+    "email": "me@neabyte.com",
+    "url": "https://github.com/NeaByteLab"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NeaByteLab/Forex-Calculator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NeaByteLab/Forex-Calculator/issues"
+  },
+  "homepage": "https://github.com/NeaByteLab/Forex-Calculator#readme",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
